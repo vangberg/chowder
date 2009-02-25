@@ -7,10 +7,10 @@ wording, anyone?)
 
 Chowder maps three locations:
 
-`GET /login`
++GET /login+
   Provides a basic login form.
 
-`POST /login`
++POST /login+
   Takes 'login' and 'password' params.
   Upon successful login the session key 'current_user' is set to whatever
   the block you provide the Chowder middleware with returns and the user is
@@ -18,7 +18,7 @@ Chowder maps three locations:
   if not set. If login fails, the user is redirected to '/login' and the
   'current_user' session key is nil or false.
 
-`GET /logout`
++GET /logout+
   Logs out the user by setting 'current_user' session key to nil/false.
 
 ## This is bitchin' (quote: Jeff Spicoli of the awesome Fast Times at Rigemont High.) - that is, edge.
@@ -59,7 +59,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
 3. Start the app and discover the great taste of clam chowder.
 
 I recommend just storing something like user ID in the session cookie and
-overriding the `current_user` helper to return the user form your DB or
+overriding the +current_user+ helper to return the user form your DB or
 whatevz:
 
     helpers do
