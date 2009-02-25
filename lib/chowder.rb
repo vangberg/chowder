@@ -7,6 +7,7 @@ class Chowder < Sinatra::Base
 
   post '/login' do
     login, password = params[:login], params[:password]
+    redirect '/'
     if session[:current_user] = @middleware.block.call(login, password)
       redirect(session[:redirect_to] || '/')
     else
