@@ -26,7 +26,8 @@ Until fixed in master, you have to use my middleware Sinatra branch at
 http://github.com/ichverstehe/sinatra/tree/middleware
 
 ## Awesome Authentication In 3 (three) Steps
-Using the Sinatra helpers shipped with Chowder we can do this quickly:
+Chowder ships with a bunch of Sinatra helpers (although you can (and should)
+use Chowder with all Rack based apps) to make life that lil' bit easier:
 
 1. Create a rackup file:
 

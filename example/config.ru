@@ -1,7 +1,3 @@
-$:.unshift('lib')
-Dir['lib/*'].each do |lib|
-  $:.unshift(File.join(File.dirname(__FILE__), lib))
-end
 require 'chowder'
 require 'app'
 
