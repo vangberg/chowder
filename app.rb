@@ -3,7 +3,7 @@ require 'chowder/helpers/sinatra'
 
 get '/' do
   'Welcome to the Impirial Intranet(tm)<br />
-  <a href="/admin">Look at teh diamonds!</a>'
+  <a href="/admin/">Look at teh diamonds!</a>'
 end
 
 get '/admin/*' do
