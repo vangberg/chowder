@@ -1,5 +1,7 @@
-class Chowder < Sinatra::Base
-  module SinatraHelpers
+require 'sinatra/base'
+
+module Sinatra
+  module Chowder
     def current_user
       session[:current_user]
     end
@@ -21,6 +23,6 @@ class Chowder < Sinatra::Base
       login unless authorized?
     end
   end
-end
 
-helpers Chowder::SinatraHelpers
+  helpers Chowder
+end
