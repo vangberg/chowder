@@ -51,7 +51,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
       user = User.first(:login => login , :password => password) && user.id
     end
     use Chowder::OpenID do |url|
-      user = User.first(:openid => url)
+      user = User.first(:openid => url) && user.id
     end
     run Sinatra::Application
     
