@@ -30,6 +30,10 @@ module Chowder
       template = Dir[File.join(views_dir, 'login.*')].first
     end
 
+    def authorize(user)
+      session[:current_user] = user
+    end
+
     get '/login' do
       if template = find_login_template
         engine = File.extname(template)[1..-1]
@@ -48,7 +52,7 @@ module Chowder
   class Basic < Base
     post '/login' do
       login, password = params[:login], params[:password]
-      if session[:current_user] = @middleware.block.call(login, password)
+      if authorize @middleware.block.call(login, password)
         redirect(session[:redirect_to] || '/')
       else
         redirect '/login'
@@ -77,10 +81,9 @@ module Chowder
     get '/openid/authenticate' do
       setup_consumer
       res = @consumer.complete(request.params, host + '/openid/authenticate')
-      if res.is_a?(::OpenID::Consumer::SuccessResponse)
-        if session[:current_user] = @middleware.block.call(res.identity_url)
+      user = @middleware.block.call(res.identity_url)
+      if res.is_a?(::OpenID::Consumer::SuccessResponse) && authorize(user)
           redirect(session[:redirect_to] || '/')
-        end
       end
       redirect '/login'
     end

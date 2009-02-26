@@ -6,10 +6,20 @@ Chowder is a Sinatra-based Rack middleware providing easy session based
 authentication. You can put Chowder in front of all your other Rack based apps
 to provide a single authentication mechanism for a multitude of apps.
 
-Chowder maps three locations:
+Chowder has two parts:
+
+* Chowder::Basic providing 'old school' login.
+* Chowder::OpenID providing .. eh, take a guess.
+
+Both authentication mechanisms provide these URLs:
 
 `GET /login`
   Provides a basic login form.
+
+`GET /logout`
+  Logs out the user by setting 'current_user' session key to nil/false.
+
+Additionally *Chowder::Basic* provides
 
 `POST /login`
   Takes 'login' and 'password' params.
@@ -19,8 +29,11 @@ Chowder maps three locations:
   if not set. If login fails, the user is redirected to '/login' and the
   'current_user' session key is nil or false.
 
-`GET /logout`
-  Logs out the user by setting 'current_user' session key to nil/false.
+And *Chowder::OpenID* provides
+
+`POST /openid/initiate`
+
+`GET /openid/authenticate`
 
 ## Awesome Authentication In 3 (three) Steps
 Chowder ships with a bunch of Sinatra helpers (although you can (and should)
@@ -36,6 +49,9 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     use Rack::Session::Cookie 
     use Chowder do |login, password|
       user = User.first(:login => login , :password => password) && user.id
+    end
+    use Chowder do |url|
+      user = User.first(:openid => url)
     end
     run Sinatra::Application
     

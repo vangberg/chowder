@@ -4,7 +4,7 @@ require 'chowder'
 require 'app'
 
 use Rack::Session::Cookie
-use Chowder::Basic do|login, password|
+use Chowder::Basic do |login, password|
   login == "harry" && password == "clamchowder"
 end
 use Chowder::OpenID do |url|
