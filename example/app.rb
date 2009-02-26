@@ -17,5 +17,5 @@ get '/admin/' do
 end
 
 get '/admin/edit' do
-  "Woah"
+  "Can editz gold n' diamonds!"
 end
