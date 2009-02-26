@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'helpers')
 class MyApp < Sinatra::Base
   disable :sessions
   get '/' do
-    redirect '/login' unless session[:current_user]
+    redirect '/login' unless session['current_user']
     "protected area"
   end
 end
@@ -30,7 +30,10 @@ class TestChowder < Test::Unit::TestCase
   end
 
   test "allows authenticated requests" do
-    get '/', :env => {:session => {'current_user' => 'foo'}}
-
+    post '/login', :login => 'harry', :password => 'clam'
+    puts response.inspect
+    follow!
+    puts response.inspect
+    assert_equal "protected area", body
   end
 end
