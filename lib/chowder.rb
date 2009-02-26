@@ -1,6 +1,14 @@
 require 'sinatra/base'
+require 'ostruct'
 
 class Chowder < Sinatra::Base
+  # Override this until in Sinatra supports it. See
+  # http://sinatra.lighthouseapp.com/projects/9779/tickets/160
+  def initialize(app=nil, *args, &block)
+    @app = app
+    @middleware = OpenStruct.new(:args => args, :block => block)
+  end
+
   helpers do
     def find_login_template
       views_dir = self.options.views || "./views"
