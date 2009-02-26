@@ -25,13 +25,17 @@ module Chowder
       @middleware = OpenStruct.new(:args => args, :block => block)
     end
 
+    def authorize(user)
+      session[:current_user] = user
+    end
+
+    def return_or_redirect_to(path)
+      redirect(session[:return_to] || path)
+    end
+
     def find_login_template
       views_dir = self.options.views || "./views"
       template = Dir[File.join(views_dir, 'login.*')].first
-    end
-
-    def authorize(user)
-      session[:current_user] = user
     end
 
     get '/login' do
@@ -53,7 +57,7 @@ module Chowder
     post '/login' do
       login, password = params[:login], params[:password]
       if authorize @middleware.block.call(login, password)
-        redirect(session[:redirect_to] || '/')
+        return_or_redirect_to '/'
       else
         redirect '/login'
       end
@@ -83,7 +87,7 @@ module Chowder
       res = @consumer.complete(request.params, host + '/openid/authenticate')
       user = @middleware.block.call(res.identity_url)
       if res.is_a?(::OpenID::Consumer::SuccessResponse) && authorize(user)
-          redirect(session[:redirect_to] || '/')
+        return_or_redirect_to '/'
       end
       redirect '/login'
     end
