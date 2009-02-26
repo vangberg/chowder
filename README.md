@@ -67,7 +67,7 @@ whatevz:
     end
 
 ## And more awesomeness is coming up:
-The default login view is quite dull (and lacks <html> and <body> and whatnot),
+The default login view is quite dull (and lacks html and body tags and whatnot),
 but if you have either views/login.haml or views/login.erb, that'll be rendered
 instead. Must have a form sending a POST request to /login with 'login' and 
 'password' parameters.
