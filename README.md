@@ -1,5 +1,7 @@
 # Chowder - Rack middleware providing session based authentication
 
+![Delicious!](http://cucinatestarossa.blogs.com/photos/uncategorized/hogisland_clamchowder.gif)
+
 Chowder is a Sinatra-based Rack middleware providing easy session based
 authentication. You can put Chowder in front of all your other Rack based apps
 to provide a single authentication mechanism for a multitude of apps. (Fix
@@ -30,8 +32,8 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     require 'chowder'
     require 'my_app'
     
-    # Not optimal, but until fixed in Sinatra (see Lighthouse ticket #000)
-    # Rack::Session::Cookie has to be explicitly included.
+    \# Not optimal, but until fixed in Sinatra (see Lighthouse ticket #161)
+    \# Rack::Session::Cookie has to be explicitly included.
     use Rack::Session::Cookie 
     use Chowder do |login, password|
       user = User.first(:login => login , :password => password) && user.id
