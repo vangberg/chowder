@@ -27,7 +27,7 @@ Chowder maps three locations:
 Chowder ships with a bunch of Sinatra helpers (although you can (and should)
 use Chowder with all Rack based apps) to make life that lil' bit easier:
 
-1. Create a rackup file:
+### Create a rackup file:
     
     require 'chowder'
     require 'my_app'
@@ -40,7 +40,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     end
     run Sinatra::Application
     
-2. Make a Sinatra app that needs authentication:
+### Make a Sinatra app that needs authentication:
     
     require 'sinatra'
     require 'chowder/helpers/sinatra'
@@ -54,7 +54,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
       'This is private'
     end
     
-3. Start the app and discover the great taste of clam chowder.
+### Start the app and discover the great taste of clam chowder.
 
 I recommend just storing something like user ID in the session cookie and
 overriding the `current_user` helper to return the user form your DB or
