@@ -28,32 +28,32 @@ Chowder ships with a bunch of Sinatra helpers (although you can (and should)
 use Chowder with all Rack based apps) to make life that lil' bit easier:
 
 1. Create a rackup file:
-
+    
     require 'chowder'
     require 'my_app'
     
-    \# Not optimal, but until fixed in Sinatra (see Lighthouse ticket #161)
-    \# Rack::Session::Cookie has to be explicitly included.
+    #  Not optimal, but until fixed in Sinatra (see Lighthouse ticket #161)
+    # Rack::Session::Cookie has to be explicitly included.
     use Rack::Session::Cookie 
     use Chowder do |login, password|
       user = User.first(:login => login , :password => password) && user.id
     end
     run Sinatra::Application
-
+    
 2. Make a Sinatra app that needs authentication:
-
+    
     require 'sinatra'
     require 'chowder/helpers/sinatra'
-
+    
     get '/' do
       'This is public'
     end
-
+    
     get '/admin' do
       require_user
       'This is private'
     end
-
+    
 3. Start the app and discover the great taste of clam chowder.
 
 I recommend just storing something like user ID in the session cookie and
