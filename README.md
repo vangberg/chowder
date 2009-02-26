@@ -47,10 +47,10 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     #  Not optimal, but until fixed in Sinatra (see Lighthouse ticket #161)
     # Rack::Session::Cookie has to be explicitly included.
     use Rack::Session::Cookie 
-    use Chowder do |login, password|
+    use Chowder::Basic do |login, password|
       user = User.first(:login => login , :password => password) && user.id
     end
-    use Chowder do |url|
+    use Chowder::OpenID do |url|
       user = User.first(:openid => url)
     end
     run Sinatra::Application
