@@ -4,8 +4,7 @@
 
 Chowder is a Sinatra-based Rack middleware providing easy session based
 authentication. You can put Chowder in front of all your other Rack based apps
-to provide a single authentication mechanism for a multitude of apps. (Fix
-wording, anyone?)
+to provide a single authentication mechanism for a multitude of apps.
 
 Chowder maps three locations:
 
