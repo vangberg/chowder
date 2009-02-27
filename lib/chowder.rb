@@ -55,7 +55,7 @@ module Chowder
 
   class Basic < Base
     post '/login' do
-      login, password = params[:login], params[:password]
+      login, password = params['login'], params['password']
       if authorize @middleware.block.call(login, password)
         return_or_redirect_to '/'
       else

@@ -87,11 +87,6 @@ but if you have either views/login.haml or views/login.erb, that'll be rendered
 instead. Must have a form sending a POST request to /login with 'login' and 
 'password' parameters.
 
-## But wait, I'm TATFT and will not tolerate non-tested software. Where are the Chowder tests?
-This was written during a train ride, and I couldn't figure out how to test
-damn sessions in Sinatra. Must Fix. (OK, I drank a couple of beers and tried
-again. Still can't figure.)
-
 Oh. And this is not production-ready. Please Do Fix.
 
 ## License
