@@ -5,6 +5,8 @@ require 'openid/store/filesystem'
 
 module Chowder
   class Base < Sinatra::Base
+    enable :sessions
+
     LOGIN_VIEW = <<-HTML
       <form action="/login" method="POST">
         Login: <input type="text" name="login" /><br />

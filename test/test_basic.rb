@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), 'helpers')
 
 class MyApp < Sinatra::Base
+  set :sessions, false
   get '/' do
     redirect '/login' unless session[:current_user]
     "protected area"
@@ -9,6 +10,8 @@ end
 
 class TestBasic < Test::Unit::TestCase
   before do
+    Chowder::Basic.set :environment, :test
+
     @app = Rack::Builder.new {
       use Chowder::Basic do |login, password|
         login == "harry" && password == "clam"
@@ -39,6 +42,11 @@ class TestBasic < Test::Unit::TestCase
       :session => {:return_to => '/awesome_place'}
     assert_equal 302, status
     assert_equal '/awesome_place', response.headers['Location']
+  end
+
+  test "allows authenticated users" do
+    get '/', {}, :session => {:current_user => "harry"}
+    assert_equal "protected area", body
   end
 
   #test "shows custom login template" do

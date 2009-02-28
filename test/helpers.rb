@@ -11,3 +11,6 @@ class Test::Unit::TestCase
   include Sinatra::Test
 end
 
+class Sinatra::Base
+  include Test::Unit::Assertions
+end

@@ -3,7 +3,6 @@ $:.unshift(File.dirname(File.expand_path(__FILE__)))
 require 'chowder'
 require 'app'
 
-use Rack::Session::Cookie
 use Chowder::Basic do |login, password|
   login == "harry" && password == "clamchowder"
 end

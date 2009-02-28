@@ -44,9 +44,6 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     require 'chowder'
     require 'my_app'
     
-    #  Not optimal, but until fixed in Sinatra (see Lighthouse ticket #161)
-    # Rack::Session::Cookie has to be explicitly included.
-    use Rack::Session::Cookie 
     use Chowder::Basic do |login, password|
       user = User.first(:login => login , :password => password) && user.id
     end
