@@ -1,7 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helpers')
 
 class MyApp < Sinatra::Base
-  set :sessions, false
   get '/' do
     redirect '/login' unless session[:current_user]
     "protected area"
