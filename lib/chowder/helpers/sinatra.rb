@@ -7,7 +7,7 @@ module Sinatra
     end
 
     def authorized?
-      current_user
+      session[:current_user]
     end
 
     def login
