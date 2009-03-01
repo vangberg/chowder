@@ -45,10 +45,10 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     require 'my_app'
     
     use Chowder::Basic do |login, password|
-      user = User.first(:login => login , :password => password) && user.id
+      user = User.first(:login => login , :password => password) and user.id
     end
     use Chowder::OpenID do |url|
-      user = User.first(:openid => url) && user.id
+      user = User.first(:openid => url) and user.id
     end
     run Sinatra::Application
     
