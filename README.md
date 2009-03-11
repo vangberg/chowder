@@ -55,7 +55,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
 ### Make a Sinatra app that needs authentication:
     
     require 'sinatra'
-    require 'chowder/helpers/sinatra'
+    require 'sinatra/chowder'
     
     get '/' do
       'This is public'
