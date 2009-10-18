@@ -8,6 +8,7 @@ class MyApp < Sinatra::Base
 end
 
 class TestBasic < Test::Unit::TestCase
+  attr_accessor :app
   def setup
     Chowder::Basic.set :environment, :test
 
@@ -21,31 +22,31 @@ class TestBasic < Test::Unit::TestCase
 
   def test_shows_login_page
     get '/login'
-    assert_match /Login/, body
+    assert_match /Login/, last_response.body
   end
 
   def test_redirects_on_authentication_success
     post '/login', :login => 'harry', 'password' => 'clam'
-    assert_equal 302, status
-    assert_equal '/', response.headers['Location']
+    assert_equal 302, last_response.status
+    assert_equal '/', last_response.headers['Location']
   end
 
   def test_redirects_failed_authentication_attempts_to_login
     post '/login', :login => 'harry', 'password' => 'salad'
-    assert_equal 302, status
-    assert_equal '/login', response.headers['Location']
+    assert_equal 302, last_response.status
+    assert_equal '/login', last_response.headers['Location']
   end
 
   def test_redirects_to_specified_URL_after_login
     post '/login', {:login => 'harry', 'password' => 'clam'},
-      :session => {:return_to => '/awesome_place'}
-    assert_equal 302, status
-    assert_equal '/awesome_place', response.headers['Location']
+      "rack.session" => {:return_to => '/awesome_place'}
+    assert_equal 302, last_response.status
+    assert_equal '/awesome_place', last_response.headers['Location']
   end
 
   def test_allows_authenticated_users
-    get '/', {}, :session => {:current_user => "harry"}
-    assert_equal "protected area", body
+    get '/', {}, "rack.session" => {:current_user => "harry"}
+    assert_equal "protected area", last_response.body
   end
 
   #test "shows custom login template" do
@@ -54,10 +55,11 @@ class TestBasic < Test::Unit::TestCase
   #end
 
   def test_logs_user_out
-    get '/logout', :session => {:current_user => true}
-    follow!
-    assert_equal 302, status
-    assert_equal '/login', response.headers['Location']
+    get '/logout', "rack.session" => {:current_user => true}
+    assert_equal 302, last_response.status
+    get last_response.headers['Location']
+    assert_equal 302, last_response.status
+    assert_equal '/login', last_response.headers['Location']
   end
 end
 

@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'test/unit'
-require 'sinatra/test'
+require 'rack/test'
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'chowder'
 begin
@@ -8,7 +8,7 @@ begin
 rescue LoadError; end
 
 class Test::Unit::TestCase
-  include Sinatra::Test
+  include Rack::Test::Methods
 end
 
 class Sinatra::Base
