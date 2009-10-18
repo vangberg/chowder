@@ -8,7 +8,7 @@ class MyApp < Sinatra::Base
 end
 
 class TestBasic < Test::Unit::TestCase
-  before do
+  def setup
     Chowder::Basic.set :environment, :test
 
     @app = Rack::Builder.new {
@@ -19,31 +19,31 @@ class TestBasic < Test::Unit::TestCase
     }
   end
 
-  test "shows login page" do
+  def test_shows_login_page
     get '/login'
     assert_match /Login/, body
   end
 
-  test "redirects on authentication success" do
+  def test_redirects_on_authentication_success
     post '/login', :login => 'harry', 'password' => 'clam'
     assert_equal 302, status
     assert_equal '/', response.headers['Location']
   end
 
-  test "redirects failed authentication attempts to login" do
+  def test_redirects_failed_authentication_attempts_to_login
     post '/login', :login => 'harry', 'password' => 'salad'
     assert_equal 302, status
     assert_equal '/login', response.headers['Location']
   end
 
-  test "redirects to specified URL after login" do
+  def test_redirects_to_specified_URL_after_login
     post '/login', {:login => 'harry', 'password' => 'clam'},
       :session => {:return_to => '/awesome_place'}
     assert_equal 302, status
     assert_equal '/awesome_place', response.headers['Location']
   end
 
-  test "allows authenticated users" do
+  def test_allows_authenticated_users
     get '/', {}, :session => {:current_user => "harry"}
     assert_equal "protected area", body
   end
@@ -53,10 +53,11 @@ class TestBasic < Test::Unit::TestCase
     #assert_match /Custom login/, body
   #end
 
-  test "logs user out" do
+  def test_logs_user_out
     get '/logout', :session => {:current_user => true}
     follow!
     assert_equal 302, status
     assert_equal '/login', response.headers['Location']
   end
 end
+

@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'test/unit'
-require 'context'
 require 'sinatra/test'
-require 'lib/chowder'
+$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
+require 'chowder'
 begin
   require 'ruby-debug'
 rescue LoadError; end
