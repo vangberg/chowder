@@ -8,16 +8,34 @@ module Chowder
     enable :sessions
 
     LOGIN_VIEW = <<-HTML
-      <form action="/login" method="POST">
-        Login: <input type="text" name="login" /><br />
-        Password: <input type="password" name="password" /><br />
-        <input type="submit" value="Login" />
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+      <html lang='en-us' xmlns='http://www.w3.org/1999/xhtml'>
+      <head><title>Log In</title></head>
+      <body>
+        <form action="/login" method="post">
+          <div id="basic_login_field">
+            <label for="login">Login: </label>
+            <input id="login" type="text" name="login" /><br />
+          </div>
+          <div id="basic_password_field">
+            <label for="password">Password: </label>
+            <input id="password" type="password" name="password" /><br />
+          </div>
+          <div id="basic_login_button">
+            <input type="submit" value="Login" />
+          </div>
+        </form>
+      <p>OpenID:</p>
+      <form action="/openid/initiate" method="post">
+        <div id="openid_login_field">
+          <label for="openid_identifier">URL: </label>
+          <input id="openid_identifier" type="text" name="openid_identifier" /><br />
+        </div>
+        <div id="openid_login_button">
+          <input type="submit" value="Login" />
+        </div>
       </form>
-      OpenID:
-      <form action="/openid/initiate" method="POST">
-        URL: <input type="text" name="openid_identifier" /><br />
-        <input type="submit" value="Login" />
-      </form>
+      </body></html>
     HTML
 
     # Override this until in Sinatra supports it. See
