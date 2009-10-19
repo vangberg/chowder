@@ -7,8 +7,12 @@ class MyApp < Sinatra::Base
   end
 end
 
-class TestBasic < Test::Unit::TestCase
+module ChowderTest
   attr_accessor :app
+end
+
+class TestBasic < Test::Unit::TestCase
+  include ChowderTest
   def setup
     Chowder::Basic.set :environment, :test
 
@@ -49,17 +53,72 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "protected area", last_response.body
   end
 
-  #test "shows custom login template" do
-    #get '/login'
-    #assert_match /Custom login/, body
-  #end
-
   def test_logs_user_out
     get '/logout', "rack.session" => {:current_user => true}
     assert_equal 302, last_response.status
     get last_response.headers['Location']
     assert_equal 302, last_response.status
     assert_equal '/login', last_response.headers['Location']
+  end
+end
+
+class TestCustomHamlLoginForm < Test::Unit::TestCase
+  include ChowderTest
+
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'test_haml_views')
+
+    @app = Rack::Builder.new {
+      use Chowder::Basic do |login, password|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  begin
+    require 'haml'
+    def test_haml_login_form
+      get '/login'
+      assert_match /Custom HAML Login Form/i, last_response.body
+      # proof that it got evaluated as haml, not just returned verbatim
+      assert_match /4/i, last_response.body
+    end
+  rescue LoadError
+    def test_nothing   # stop the testrunner's moaning about lack of tests
+      assert_equal 1, 1
+    end
+  end
+end
+
+class TestCustomErbLoginForm < Test::Unit::TestCase
+  include ChowderTest
+
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'test_erb_views')
+
+    @app = Rack::Builder.new {
+      use Chowder::Basic do |login, password|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  begin
+    require 'erb'
+    def test_haml_login_form
+      get '/login'
+      assert_match /Custom ERB Login Form/i, last_response.body
+      # proof that it got evaluated as erb, not just returned verbatim
+      assert_match /4/i, last_response.body
+    end
+  rescue LoadError
+    def test_nothing   # stop the testrunner's moaning about lack of tests
+      assert_equal 1, 1
+    end
   end
 end
 
