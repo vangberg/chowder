@@ -5,6 +5,12 @@ class MyApp < Sinatra::Base
     redirect '/login' unless session[:current_user]
     "protected area"
   end
+
+  get '/alternate_path' do
+    session[:return_to] = '/alternate_path'
+    redirect '/login' unless session[:current_user]
+    "alternate protected area"
+  end
 end
 
 module ChowderTest
@@ -17,11 +23,15 @@ class TestBasic < Test::Unit::TestCase
     Chowder::Basic.set :environment, :test
 
     @app = Rack::Builder.new {
-      use Chowder::Basic do |login, password|
+      use Chowder::Basic, :secret => 'shhhh' do |login, password|
         login == "harry" && password == "clam"
       end
       run MyApp
     }
+  end
+
+  def login!
+    post '/login', :login => 'harry', :password => 'clam'
   end
 
   def test_shows_login_page
@@ -30,7 +40,7 @@ class TestBasic < Test::Unit::TestCase
   end
 
   def test_redirects_on_authentication_success
-    post '/login', :login => 'harry', 'password' => 'clam'
+    login!
     assert_equal 302, last_response.status
     assert_equal '/', last_response.headers['Location']
   end
@@ -42,14 +52,15 @@ class TestBasic < Test::Unit::TestCase
   end
 
   def test_redirects_to_specified_URL_after_login
-    post '/login', {:login => 'harry', 'password' => 'clam'},
-      "rack.session" => {:return_to => '/awesome_place'}
+    get '/alternate_path'
+    login!
     assert_equal 302, last_response.status
-    assert_equal '/awesome_place', last_response.headers['Location']
+    assert_equal '/alternate_path', last_response.headers['Location']
   end
 
   def test_allows_authenticated_users
-    get '/', {}, "rack.session" => {:current_user => "harry"}
+    login!
+    get '/', {}
     assert_equal "protected area", last_response.body
   end
 

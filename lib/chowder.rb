@@ -5,7 +5,7 @@ require 'openid/store/filesystem'
 
 module Chowder
   class Base < Sinatra::Base
-    enable :sessions
+    disable :raise_errors
 
     LOGIN_VIEW = <<-HTML
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -38,9 +38,14 @@ module Chowder
       </body></html>
     HTML
 
-    # Override this until in Sinatra supports it. See
-    # http://sinatra.lighthouseapp.com/projects/9779/tickets/160
-    def initialize(app=nil, *args, &block)
+    def self.new(app=nil, args={}, &block)
+      builder = Rack::Builder.new
+      builder.use Rack::Session::Cookie, :secret => args[:secret]
+      builder.run super
+      builder.to_app
+    end
+
+    def initialize(app=nil, args={}, &block)
       @app = app
       @middleware = OpenStruct.new(:args => args, :block => block)
     end
