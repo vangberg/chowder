@@ -1,8 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'rack/test'
-$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
-require 'chowder'
+require 'lib/chowder'
 begin
   require 'ruby-debug'
 rescue LoadError; end
