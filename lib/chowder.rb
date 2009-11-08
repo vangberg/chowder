@@ -112,7 +112,7 @@ module Chowder
 
     get '/signup' do
       if @signup_callback
-        render_custom_template(:signup) || SIGNUP_VIEW.gsub(/__ERRORS__/, '')
+        render_custom_template(:signup) || signup_view_with_errors([])
       else
         throw :pass
       end
@@ -128,12 +128,20 @@ module Chowder
         return_or_redirect_to '/'
       else
         @errors = extras
-        render_custom_template(:signup) ||
+        render_custom_template(:signup) || signup_view_with_errors(extras)
           SIGNUP_VIEW.gsub(
             /__ERRORS__/,
             @errors.map { |e| "<p class=\"error\">#{e}</p>" }.join("\n")
           )
       end
+    end
+
+    private
+    def signup_view_with_errors(errors)
+      SIGNUP_VIEW.gsub(
+        /__ERRORS__/,
+        errors.map { |e| "<p class=\"error\">#{e}</p>" }.join("\n")
+        )
     end
   end
 
