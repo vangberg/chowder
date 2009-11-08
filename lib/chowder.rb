@@ -69,7 +69,8 @@ module Chowder
 
     def initialize(app=nil, args={}, &block)
       @app = app
-      @middleware = OpenStruct.new(:args => args, :block => block)
+      @signup_callback = args[:signup]
+      @login_callback = block
     end
 
     def authorize(user)
@@ -102,7 +103,7 @@ module Chowder
   class Basic < Base
     post '/login' do
       login, password = params['login'], params['password']
-      if authorize @middleware.block.call(login, password)
+      if authorize @login_callback.call(login, password)
         return_or_redirect_to '/'
       else
         redirect '/login'
@@ -110,7 +111,7 @@ module Chowder
     end
 
     get '/signup' do
-      if @middleware.args[:signup]
+      if @signup_callback
         render_custom_template(:signup) || SIGNUP_VIEW.gsub(/__ERRORS__/, '')
       else
         throw :pass
@@ -118,11 +119,10 @@ module Chowder
     end
 
     post '/signup' do
-      throw :pass unless @middleware.args[:signup]
+      throw :pass unless @signup_callback
 
-      signup_callback = @middleware.args[:signup]
       # results is either [true, <userid>] or [false, <errors>]
-      successful_signup, *extras = signup_callback.call(params)
+      successful_signup, *extras = @signup_callback.call(params)
       if successful_signup
         authorize extras[0]
         return_or_redirect_to '/'
@@ -158,7 +158,7 @@ module Chowder
     get '/openid/authenticate' do
       setup_consumer
       res = @consumer.complete(request.params, host + '/openid/authenticate')
-      user = @middleware.block.call(res.identity_url)
+      user = @login_callback.call(res.identity_url)
       if res.is_a?(::OpenID::Consumer::SuccessResponse) && authorize(user)
         return_or_redirect_to '/'
       end
