@@ -68,9 +68,9 @@ module Chowder
     end
 
     def initialize(app=nil, args={}, &block)
-      @app = app
       @signup_callback = args[:signup]
       @login_callback = block
+      super(app)
     end
 
     def authorize(user)
