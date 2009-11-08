@@ -25,16 +25,16 @@ module Chowder
             <input type="submit" value="Login" />
           </div>
         </form>
-      <p>OpenID:</p>
-      <form action="/openid/initiate" method="post">
-        <div id="openid_login_field">
-          <label for="openid_identifier">URL: </label>
-          <input id="openid_identifier" type="text" name="openid_identifier" /><br />
-        </div>
-        <div id="openid_login_button">
-          <input type="submit" value="Login" />
-        </div>
-      </form>
+        <p>OpenID:</p>
+        <form action="/openid/initiate" method="post">
+          <div id="openid_login_field">
+            <label for="openid_identifier">URL: </label>
+            <input id="openid_identifier" type="text" name="openid_identifier" /><br />
+          </div>
+          <div id="openid_login_button">
+            <input type="submit" value="Login" />
+          </div>
+        </form>
       </body></html>
     HTML
 
