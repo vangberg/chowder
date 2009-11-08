@@ -2,6 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'rack/test'
 require 'lib/chowder'
+
 begin
   require 'ruby-debug'
 rescue LoadError; end

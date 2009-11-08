@@ -11,6 +11,20 @@ class MyApp < Sinatra::Base
     redirect '/login' unless session[:current_user]
     "alternate protected area"
   end
+
+  get "/userid" do
+    session[:return_to] = '/userid'
+    redirect '/login' unless session[:current_user]
+    session[:current_user].to_s
+  end
+
+  get '/*' do
+    "fallback"
+  end
+
+  post '/*' do
+    "fallback post"
+  end
 end
 
 module ChowderTest
@@ -21,6 +35,7 @@ class TestBasic < Test::Unit::TestCase
   include ChowderTest
   def setup
     Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
 
     @app = Rack::Builder.new {
       use Chowder::Basic, :secret => 'shhhh' do |login, password|
@@ -73,7 +88,7 @@ class TestBasic < Test::Unit::TestCase
   end
 end
 
-class TestCustomHamlLoginForm < Test::Unit::TestCase
+class TestCustomHamlViews < Test::Unit::TestCase
   include ChowderTest
 
   def setup
@@ -81,7 +96,9 @@ class TestCustomHamlLoginForm < Test::Unit::TestCase
     Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'test_haml_views')
 
     @app = Rack::Builder.new {
-      use Chowder::Basic do |login, password|
+      use Chowder::Basic, {
+        :signup => lambda { |params| 1 }
+      } do |login, password|
         true
       end
       run MyApp
@@ -96,6 +113,13 @@ class TestCustomHamlLoginForm < Test::Unit::TestCase
       # proof that it got evaluated as haml, not just returned verbatim
       assert_match /4/i, last_response.body
     end
+
+    def test_haml_signup_form
+      get '/signup'
+      assert_match /Custom HAML Signup Form/i, last_response.body
+      # proof that it got evaluated as haml, not just returned verbatim
+      assert_match /5/i, last_response.body
+    end
   rescue LoadError
     def test_nothing   # stop the testrunner's moaning about lack of tests
       assert_equal 1, 1
@@ -103,7 +127,7 @@ class TestCustomHamlLoginForm < Test::Unit::TestCase
   end
 end
 
-class TestCustomErbLoginForm < Test::Unit::TestCase
+class TestCustomErbViews < Test::Unit::TestCase
   include ChowderTest
 
   def setup
@@ -111,7 +135,9 @@ class TestCustomErbLoginForm < Test::Unit::TestCase
     Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'test_erb_views')
 
     @app = Rack::Builder.new {
-      use Chowder::Basic do |login, password|
+      use Chowder::Basic, {
+        :signup => lambda { |params| 1 }
+      } do |login, password|
         true
       end
       run MyApp
@@ -120,11 +146,18 @@ class TestCustomErbLoginForm < Test::Unit::TestCase
 
   begin
     require 'erb'
-    def test_haml_login_form
+    def test_erb_login_form
       get '/login'
       assert_match /Custom ERB Login Form/i, last_response.body
       # proof that it got evaluated as erb, not just returned verbatim
       assert_match /4/i, last_response.body
+    end
+
+    def test_erb_signup_form
+      get '/signup'
+      assert_match /Custom ERB Signup Form/i, last_response.body
+      # proof that it got evaluated as erb, not just returned verbatim
+      assert_match /5/i, last_response.body
     end
   rescue LoadError
     def test_nothing   # stop the testrunner's moaning about lack of tests
@@ -133,3 +166,71 @@ class TestCustomErbLoginForm < Test::Unit::TestCase
   end
 end
 
+class TestSignup < Test::Unit::TestCase
+  include ChowderTest
+
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+    @app = Rack::Builder.new {
+      use Chowder::Basic, {
+        :signup => lambda { |params|
+          if params[:login].length < 8
+            [true, params[:login]]
+          else
+            [false, "It's too long", "(that's what she said)"]
+          end
+        },
+      } do |l, p|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  def test_signup_route
+    get '/signup'
+    assert_match /Sign Up/, last_response.body
+  end
+
+  def test_successful_signup
+    post '/signup', {'login' => 'alice', 'password' => 'abc123'}
+    assert_equal '/', last_response.headers["Location"]
+
+    get '/userid'
+    assert_equal 'alice', last_response.body
+  end
+
+  def test_unsuccessful_signup
+    post '/signup', {'login' => 'usernameistoolong', 'password' => 'abc123'}
+    assert_match(/too long/, last_response.body)
+    assert_match(/that\'s what she said/, last_response.body)
+  end
+end
+
+class TestNoSignup < Test::Unit::TestCase
+  include ChowderTest
+
+  Chowder::Basic.set :environment, :test
+  Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+  def setup
+    @app = Rack::Builder.new {
+      use Chowder::Basic do |login, password|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  def test_get_signup_is_skipped
+    get '/signup'
+    assert_equal 'fallback', last_response.body
+  end
+
+  def test_post_signup_is_skipped
+    post '/signup', :login => 'argyle', :password => 'sock'
+    assert_equal 'fallback post', last_response.body
+  end
+end

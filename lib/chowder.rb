@@ -38,6 +38,28 @@ module Chowder
       </body></html>
     HTML
 
+    SIGNUP_VIEW = <<-HTML
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+      <html lang='en-us' xmlns='http://www.w3.org/1999/xhtml'>
+      <head><title>Sign Up</title></head>
+      <body>
+        __ERRORS__
+        <form action="/signup" method="post">
+          <div id="basic_login_field">
+            <label for="login">Login: </label>
+            <input id="login" type="text" name="login" /><br />
+          </div>
+          <div id="basic_password_field">
+            <label for="password">Password: </label>
+            <input id="password" type="password" name="password" /><br />
+          </div>
+          <div id="basic_signup_button">
+            <input type="submit" value="Sign Up" />
+          </div>
+        </form>
+      </body></html>
+    HTML
+
     def self.new(app=nil, args={}, &block)
       builder = Rack::Builder.new
       builder.use Rack::Session::Cookie, :secret => args[:secret]
@@ -58,18 +80,17 @@ module Chowder
       redirect(session[:return_to] || path)
     end
 
-    def find_login_template
+    def render_custom_template(type)
       views_dir = self.options.views || "./views"
-      template = Dir[File.join(views_dir, 'login.*')].first
+      template = Dir[File.join(views_dir, "#{type}.*")].first
+      if template
+        engine = File.extname(template)[1..-1]
+        send(engine, type)
+      end
     end
 
     get '/login' do
-      if template = find_login_template
-        engine = File.extname(template)[1..-1]
-        send(engine, :login)
-      else
-        LOGIN_VIEW
-      end
+      render_custom_template(:login) || LOGIN_VIEW
     end
 
     get '/logout' do
@@ -85,6 +106,33 @@ module Chowder
         return_or_redirect_to '/'
       else
         redirect '/login'
+      end
+    end
+
+    get '/signup' do
+      if @middleware.args[:signup]
+        render_custom_template(:signup) || SIGNUP_VIEW.gsub(/__ERRORS__/, '')
+      else
+        throw :pass
+      end
+    end
+
+    post '/signup' do
+      throw :pass unless @middleware.args[:signup]
+
+      signup_callback = @middleware.args[:signup]
+      # results is either [true, <userid>] or [false, <errors>]
+      successful_signup, *extras = signup_callback.call(params)
+      if successful_signup
+        authorize extras[0]
+        return_or_redirect_to '/'
+      else
+        @errors = extras
+        render_custom_template(:signup) ||
+          SIGNUP_VIEW.gsub(
+            /__ERRORS__/,
+            @errors.map { |e| "<p class=\"error\">#{e}</p>" }.join("\n")
+          )
       end
     end
   end
