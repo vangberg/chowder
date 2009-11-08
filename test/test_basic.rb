@@ -88,6 +88,31 @@ class TestBasic < Test::Unit::TestCase
   end
 end
 
+class TestSpecifyingLoginCallbackInHash < Test::Unit::TestCase # blurgh, what a name
+  include ChowderTest
+
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+    @app = Rack::Builder.new {
+      use Chowder::Basic,
+      :secret => 'shhhh',
+      :login => proc { |login, password|
+        login == "harry" && password == "clam"
+      }
+
+      run MyApp
+    }
+  end
+
+  def test_logging_in
+    post '/login', :login => 'harry', :password => 'clam'
+    get '/'
+    assert_equal "protected area", last_response.body
+  end
+end
+
 class TestCustomHamlViews < Test::Unit::TestCase
   include ChowderTest
 

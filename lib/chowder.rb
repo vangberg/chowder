@@ -69,7 +69,7 @@ module Chowder
 
     def initialize(app=nil, args={}, &block)
       @signup_callback = args[:signup]
-      @login_callback = block
+      @login_callback = args[:login] || block
       super(app)
     end
 
