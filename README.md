@@ -37,6 +37,19 @@ Additionally *Chowder::Basic* provides
   Takes whatever params are on the form ('login' and 'password' by
   default) and passes them, as a hash, to your :signup callback.
 
+  *About the signup callback:*
+
+  Your signup callback has to return one of two things:
+  If you successfully sign up a user (whatever that means for you),
+  your callback must return a two-element array like so:
+  `[true, newuser.id]`.
+
+  If there were errors, your signup callback must return an n-element
+  array like so:
+  `[false, "error 1", "error 2", ...]`.
+
+  These errors will be made available to your custom signup view as `@errors`.
+
 And *Chowder::OpenID* provides
 
 `POST /openid/initiate`
@@ -99,9 +112,9 @@ whatevz:
 
 ## And more awesomeness is coming up:
 The default login view is quite dull, but if you have either
-views/login.haml or views/login.erb, that'll be rendered instead. Must
-have a form sending a POST request to /login with 'login' and
-'password' parameters.
+views/login.haml or views/login.erb, that'll be rendered instead. A
+custom login view must have a form sending a POST request to /login
+with 'login' and 'password' parameters.
 
 Likewise, the default signup view is overridden if you have
 views/signup.haml or views/signup.erb. It needs the same 'login' and
