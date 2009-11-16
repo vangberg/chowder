@@ -19,7 +19,7 @@ Both authentication mechanisms provide these URLs:
 `GET /logout`
   Logs out the user by setting 'current_user' session key to nil/false.
 
-**Additionally `*Chowder::Basic` provides:**
+**Additionally `Chowder::Basic` provides:**
 
 `POST /login`
   Takes 'login' and 'password' params.
