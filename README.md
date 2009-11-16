@@ -6,7 +6,7 @@ Chowder is a Sinatra-based Rack middleware providing easy session based
 authentication. You can put Chowder in front of all your other Rack based apps
 to provide a single authentication mechanism for a multitude of apps.
 
-Chowder has two parts:
+Chowder consists of two parts:
 
 * Chowder::Basic providing 'old school' login.
 * Chowder::OpenID providing .. eh, take a guess.
@@ -19,7 +19,7 @@ Both authentication mechanisms provide these URLs:
 `GET /logout`
   Logs out the user by setting 'current_user' session key to nil/false.
 
-Additionally *Chowder::Basic* provides
+**Additionally `*Chowder::Basic` provides:**
 
 `POST /login`
   Takes 'login' and 'password' params.
@@ -37,7 +37,7 @@ Additionally *Chowder::Basic* provides
   Takes whatever params are on the form ('login' and 'password' by
   default) and passes them, as a hash, to your :signup callback.
 
-  *About the signup callback:*
+**About the signup callback:**
 
   Your signup callback has to return one of two things:
   If you successfully sign up a user (whatever that means for you),
@@ -50,7 +50,7 @@ Additionally *Chowder::Basic* provides
 
   These errors will be made available to your custom signup view as `@errors`.
 
-And *Chowder::OpenID* provides
+**And `Chowder::OpenID` provides:**
 
 `POST /openid/initiate`
 
@@ -111,16 +111,48 @@ whatevz:
     end
 
 ## And more awesomeness is coming up:
+
+### Custom login view
+
 The default login view is quite dull, but if you have either
 views/login.haml or views/login.erb, that'll be rendered instead. A
 custom login view must have a form sending a POST request to /login
 with 'login' and 'password' parameters.
 
+### Custom signup view
 Likewise, the default signup view is overridden if you have
 views/signup.haml or views/signup.erb. It needs the same 'login' and
 'password' parameters as the login form. You can do whatever fancy
 stuff you like; all your form params get passed right to your :signup
 callback.
 
+### Cookie integrity checking
+
+If you provide a value for the `:secret`-key, the cookie data will be
+checked for data integrity, courtesy of `Rack::Session::Cookie`.
+
 ## License
-MIT - see LICENSE for further information.
+Copyright (c) 2009
+Harry Vangberg <harry@vangberg.name>
+Sam Merritt <http://github.com/smerritt/>
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.

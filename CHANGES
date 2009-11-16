@@ -1,0 +1,11 @@
+= 0.2.0 / 2009-11-16
+
+  * Use rack/test instead of sinatra/test [Sam Merritt]
+
+  * Default login page is valid XHTML Strict [Sam Merritt]
+
+  * Check cookie integrity [Sam Merritt]
+
+  * User signups [Sam Merritt]
+
+  * Login callback can be passed as :login => proc {} [Sam Merritt]
