@@ -129,10 +129,10 @@ module Chowder
       else
         @errors = extras
         render_custom_template(:signup) || signup_view_with_errors(extras)
-          SIGNUP_VIEW.gsub(
-            /__ERRORS__/,
-            @errors.map { |e| "<p class=\"error\">#{e}</p>" }.join("\n")
-          )
+        SIGNUP_VIEW.gsub(
+          /__ERRORS__/,
+          @errors.map { |e| "<p class=\"error\">#{e}</p>" }.join("\n")
+        )
       end
     end
 
