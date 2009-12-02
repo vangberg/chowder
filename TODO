@@ -1,2 +1,3 @@
 - Rails helpers? Merb helpers?
 - Tests for Chowder::OpenID
+- DRY up tests
