@@ -113,6 +113,75 @@ class TestSpecifyingLoginCallbackInHash < Test::Unit::TestCase # blurgh, what a 
   end
 end
 
+class TestSignup < Test::Unit::TestCase
+  include ChowderTest
+
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+    @app = Rack::Builder.new {
+      use Chowder::Basic, {
+        :signup => lambda { |params|
+          if params[:login].length < 8
+            [true, params[:login]]
+          else
+            [false, "It's too long", "(that's what she said)"]
+          end
+        },
+      } do |l, p|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  def test_signup_route
+    get '/signup'
+    assert_match /Sign Up/, last_response.body
+  end
+
+  def test_successful_signup
+    post '/signup', {'login' => 'alice', 'password' => 'abc123'}
+    assert_equal '/', last_response.headers["Location"]
+
+    get '/userid'
+    assert_equal 'alice', last_response.body
+  end
+
+  def test_unsuccessful_signup
+    post '/signup', {'login' => 'usernameistoolong', 'password' => 'abc123'}
+    assert_match(/too long/, last_response.body)
+    assert_match(/that\'s what she said/, last_response.body)
+  end
+end
+
+class TestNoSignup < Test::Unit::TestCase
+  include ChowderTest
+
+  Chowder::Basic.set :environment, :test
+  Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+  def setup
+    @app = Rack::Builder.new {
+      use Chowder::Basic do |login, password|
+        true
+      end
+      run MyApp
+    }
+  end
+
+  def test_get_signup_is_skipped
+    get '/signup'
+    assert_equal 'fallback', last_response.body
+  end
+
+  def test_post_signup_is_skipped
+    post '/signup', :login => 'argyle', :password => 'sock'
+    assert_equal 'fallback post', last_response.body
+  end
+end
+
 class TestCustomHamlViews < Test::Unit::TestCase
   include ChowderTest
 
@@ -188,74 +257,5 @@ class TestCustomErbViews < Test::Unit::TestCase
     def test_nothing   # stop the testrunner's moaning about lack of tests
       assert_equal 1, 1
     end
-  end
-end
-
-class TestSignup < Test::Unit::TestCase
-  include ChowderTest
-
-  def setup
-    Chowder::Basic.set :environment, :test
-    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
-
-    @app = Rack::Builder.new {
-      use Chowder::Basic, {
-        :signup => lambda { |params|
-          if params[:login].length < 8
-            [true, params[:login]]
-          else
-            [false, "It's too long", "(that's what she said)"]
-          end
-        },
-      } do |l, p|
-        true
-      end
-      run MyApp
-    }
-  end
-
-  def test_signup_route
-    get '/signup'
-    assert_match /Sign Up/, last_response.body
-  end
-
-  def test_successful_signup
-    post '/signup', {'login' => 'alice', 'password' => 'abc123'}
-    assert_equal '/', last_response.headers["Location"]
-
-    get '/userid'
-    assert_equal 'alice', last_response.body
-  end
-
-  def test_unsuccessful_signup
-    post '/signup', {'login' => 'usernameistoolong', 'password' => 'abc123'}
-    assert_match(/too long/, last_response.body)
-    assert_match(/that\'s what she said/, last_response.body)
-  end
-end
-
-class TestNoSignup < Test::Unit::TestCase
-  include ChowderTest
-
-  Chowder::Basic.set :environment, :test
-  Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
-
-  def setup
-    @app = Rack::Builder.new {
-      use Chowder::Basic do |login, password|
-        true
-      end
-      run MyApp
-    }
-  end
-
-  def test_get_signup_is_skipped
-    get '/signup'
-    assert_equal 'fallback', last_response.body
-  end
-
-  def test_post_signup_is_skipped
-    post '/signup', :login => 'argyle', :password => 'sock'
-    assert_equal 'fallback post', last_response.body
   end
 end
