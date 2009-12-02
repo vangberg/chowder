@@ -66,10 +66,10 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
     require 'my_app'
 
     use Chowder::Basic,
-      :login => lambda do |login, password|
+      :login => lambda {|login, password|
         user = User.first(:login => login , :password => password) and user.id
-      end,
-      :signup => lambda do |params|
+      },
+      :signup => lambda {|params|
         # DataMapper style; of course you can do ActiveRecord or whatever
         u = User.create(params)
         if u.valid?
@@ -77,7 +77,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
         else
           [false, *(u.errors)]
         end
-      end
+      }
 
     use Chowder::OpenID do |url|
       user = User.first(:openid => url) and user.id
