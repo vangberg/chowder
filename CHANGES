@@ -1,3 +1,7 @@
+= 0.2.1 / 2010-01-19
+
+  * Rails-integration module
+
 = 0.2.0.1 / 2009-11-23
 
   * Fix gemspec
