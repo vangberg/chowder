@@ -110,6 +110,50 @@ whatevz:
       end
     end
 
+### Available methods
+
+`current_user`, `authorized?`, `login`, `logout`, `require_user`.
+
+## Rails Integration
+
+Using Chowder with Rails is easy. First, add Chowder to your gem dependencies
+and middleware stack in `config/environment.rb`:
+    
+    config.gem 'chowder'
+    config.gem 'chowder', :lib => 'chowder/rails'
+
+    config.middleware.use Chowder::Basic do |user,pwd|
+      user == "foo" && pwd == "bar"
+    end
+
+Next include `Chowder::Rails` in your controllers to get a bunch of
+Chowder-related helpers, and use `require_user` to protect your application:
+    
+    class ApplicationController < ActionController::Base
+      include Chowder::Rails
+
+      before_filter :require_user, :only => [:secret1, :secret2]
+
+      ...
+    end
+
+### Rails Middleware Workaround
+
+Rails doesn't behave exactly like `Rack::Builder`, so a small hack is required
+to make Chowder work with Rails, you can place this in `config/environment.rb`:
+    
+    class Chowder::Basic
+      def call(*args)
+        args.empty? ? self : super(*args)
+      end
+    end
+
+This has been fixed in Rails edge.
+
+### Available methods
+
+`current_user`, `authorized?`, `login`, `logout`, `require_user`.
+
 ## And more awesomeness is coming up:
 
 ### Custom login view
