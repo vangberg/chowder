@@ -143,7 +143,7 @@ Rails doesn't behave exactly like `Rack::Builder`, so a small hack is required
 to make Chowder work with Rails, you can place this in `config/environment.rb`:
     
     class Chowder::Basic
-      def call(*args)
+      def self.call(*args)
         args.empty? ? self : super(*args)
       end
     end
