@@ -1,6 +1,7 @@
 $:.unshift(File.join(File.dirname(File.expand_path(__FILE__)), '..', 'lib'))
 $:.unshift(File.dirname(File.expand_path(__FILE__)))
 require 'chowder'
+require 'chowder/openid'
 require 'app'
 
 use Chowder::Basic do |login, password|

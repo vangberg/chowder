@@ -63,6 +63,7 @@ use Chowder with all Rack based apps) to make life that lil' bit easier:
 ### Create a rackup file:
 
     require 'chowder'
+    require 'chowder/openid'
     require 'my_app'
 
     use Chowder::Basic,
