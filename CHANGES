@@ -1,3 +1,7 @@
+= 0.2.4.1 / 2010-02-10
+
+  * Sinatra helpers redirects relative as well.
+
 = 0.2.4 / 2010-02-10
 
   * Redirect relative to application path, so it works with Rack::Builder#map
