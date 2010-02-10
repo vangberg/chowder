@@ -12,7 +12,7 @@ module Sinatra
 
     def login
       session[:redirect_to] = request.path_info
-      redirect '/login'
+      redirect request.script_name + '/login'
     end
 
     def logout
