@@ -88,6 +88,39 @@ class TestBasic < Test::Unit::TestCase
   end
 end
 
+class TestBasicRelative < Test::Unit::TestCase
+  include ChowderTest
+  def setup
+    Chowder::Basic.set :environment, :test
+    Chowder::Basic.set :views, File.join(File.dirname(__FILE__), 'nowhere')
+
+    @app = Rack::Builder.new {
+      map "/foo" do
+        use Chowder::Basic, :secret => 'shhhh' do |login, password|
+          login == "harry" && password == "clam"
+        end
+        run MyApp
+      end
+    }
+  end
+
+  def login!
+    post '/foo/login', :login => 'harry', :password => 'clam'
+  end
+
+  def test_redirects_on_authentication_success
+    login!
+    assert_equal 302, last_response.status
+    assert_equal '/foo/', last_response.headers['Location']
+  end
+
+  def test_redirects_failed_authentication_attempts_to_login
+    post '/foo/login', :login => 'harry', 'password' => 'salad'
+    assert_equal 302, last_response.status
+    assert_equal '/foo/login', last_response.headers['Location']
+  end
+end
+
 class TestSpecifyingLoginCallbackInHash < Test::Unit::TestCase # blurgh, what a name
   include ChowderTest
 

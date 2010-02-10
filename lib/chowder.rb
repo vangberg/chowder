@@ -76,7 +76,7 @@ module Chowder
     end
 
     def return_or_redirect_to(path)
-      redirect(session[:return_to] || path)
+      redirect(session[:return_to] || request.script_name + path)
     end
 
     def render_custom_template(type)
@@ -94,7 +94,7 @@ module Chowder
 
     get '/logout' do
       session[:current_user] = nil
-      redirect '/'
+      redirect request.script_name + '/'
     end
   end
 
@@ -104,7 +104,7 @@ module Chowder
       if authorize @login_callback.call(login, password)
         return_or_redirect_to '/'
       else
-        redirect '/login'
+        redirect request.script_name + '/login'
       end
     end
 
