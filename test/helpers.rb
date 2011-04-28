@@ -1,7 +1,9 @@
+$LOAD_PATH.unshift("lib")
+
 require 'rubygems'
 require 'test/unit'
 require 'rack/test'
-require 'lib/chowder'
+require 'chowder'
 
 begin
   require 'ruby-debug'

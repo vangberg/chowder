@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'helpers')
+require "./test/helpers.rb"
 
 class MyApp < Sinatra::Base
   get '/' do
