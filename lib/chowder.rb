@@ -59,10 +59,10 @@ module Chowder
     HTML
 
     def self.new(app=nil, args={}, &block)
-      Rack::Builder.new {
-        use Rack::Session::Cookie, :secret => args[:secret]
-        run super
-      }.to_app
+      builder = Rack::Builder.new
+      builder.use Rack::Session::Cookie, :secret => args[:secret]
+      builder.run super
+      builder.to_app
     end
 
     def initialize(app=nil, args={}, &block)
